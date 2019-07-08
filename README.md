@@ -20,6 +20,13 @@ const {data, info: {height, width}} = svgObj
 - .colors = `4`
 - .scale = `2`
 
+### Optimizations
+
+- .tolerance = `0.2` (range: `0.0 - 5.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
+  - tries to reduce number of line points
+- .smooth = `0.0` (range: `0.0 - 0.5`) - WARNING: _significant_ increase of file size!
+  - tries to round out harsh line corners
+
 ## Usage (cli)
 
 `npm install -g svg-thumbnailer`
