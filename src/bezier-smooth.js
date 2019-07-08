@@ -10,7 +10,7 @@ function line([AX, AY], [BX, BY]) {
   }
 }
 
-const controlPoint = (lineCalc, smooth) => (current, previous, next, reverse) => {
+const controlPoint = (lineCalc, smooth, smoothDecimalPlaces) => (current, previous, next, reverse) => {
   const p = previous || current
   const n = next || current
 
@@ -20,10 +20,11 @@ const controlPoint = (lineCalc, smooth) => (current, previous, next, reverse) =>
   // If is end-control-point, add PI to the angle to go backward
   const angle = l.angle + (reverse ? Math.PI : 0)
   const length = l.length * Math.min(0.5, smooth)
+  const decimals = 10 ** smoothDecimalPlaces
 
   // The control point position is relative to the current point
-  const x = Math.round(current[0] + (Math.cos(angle) * length * 10)) / 10
-  const y = Math.round(current[1] + (Math.sin(angle) * length * 10)) / 10
+  const x = Math.round(current[0] + (Math.cos(angle) * length * decimals)) / decimals
+  const y = Math.round(current[1] + (Math.sin(angle) * length * decimals)) / decimals
 
   return [x, y]
 }
@@ -44,9 +45,9 @@ const pointsReducer = command =>
 const createLine = (pointsXY, command) =>
   pointsXY.reduce(pointsReducer(command), '')
 
-const controlPointCalc = smooth => controlPoint(line, smooth)
+const controlPointCalc = (smooth, smoothDecimalPlaces) => controlPoint(line, smooth, smoothDecimalPlaces)
 
-const bezierCommandCalc = smooth => bezierCommand(controlPointCalc(smooth))
+const bezierCommandCalc = (smooth, smoothDecimalPlaces) => bezierCommand(controlPointCalc(smooth, smoothDecimalPlaces))
 
 module.exports =
-  (pointsXY = [], smooth = 0.1) => createLine(pointsXY, bezierCommandCalc(smooth))
+  (pointsXY = [], {smooth = 0.1, smoothDecimalPlaces = 1}) => createLine(pointsXY, bezierCommandCalc(smooth, smoothDecimalPlaces))

@@ -2,7 +2,7 @@ const simplifyjs = require('simplify-js')
 
 const bezierSmooth = require('./bezier-smooth')
 
-function optimizeLineCmd(lineCmd, {tolerance, smooth}) {
+function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
   // Note: lineCmd does not being with 'l'
   const numbers = lineCmd.match(/-?\d+ */g)
   const numbersGrouped = numbers.reduce((g, n, i) => {
@@ -19,7 +19,7 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth}) {
 
   if (smooth) {
     const points2XY = points2.map(({x, y}) => [x, y])
-    return bezierSmooth(points2XY, smooth)
+    return bezierSmooth(points2XY, {smooth, smoothDecimalPlaces})
   }
 
   return points2.reduce((str, {x, y}) => {
@@ -29,7 +29,7 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth}) {
   }, 'l')
 }
 
-module.exports = function (data, {tolerance = 0.01, smooth}) {
+module.exports = function (data, {tolerance = 0.2, combineLines = false, smooth, smoothDecimalPlaces}) {
   const paths = data.match(/d="([^"]+)"/g)
   const pathsCleaned = paths.map(m => m.substring(3, m.length - 1))
   const pathsCommands = pathsCleaned
@@ -37,6 +37,10 @@ module.exports = function (data, {tolerance = 0.01, smooth}) {
     .map(d => d.match(/[a-z][^a-z]*/ig))
     // Note: combine line command segments together
     .map(cs => cs.map(c => {
+      if (!(tolerance && combineLines)) {
+        return c
+      }
+
       const cmd = c[0]
 
       if (cmd === 'h') {
@@ -55,7 +59,7 @@ module.exports = function (data, {tolerance = 0.01, smooth}) {
     const cmd = c[0]
 
     if (cmd !== 'l' && lineCmd.length > 0) {
-      const optimalLineCmd = optimizeLineCmd(lineCmd, {tolerance, smooth}) // <-- OPTIMIZATIONS HERE ******************
+      const optimalLineCmd = optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) // <-- OPTIMIZATIONS HERE ******************
       /// console.log({simpleLineCmd})
       pathCmd += optimalLineCmd
       lineCmd = ''
