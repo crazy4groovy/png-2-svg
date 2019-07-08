@@ -63,4 +63,4 @@ Eg. `svg-thumbnailer "/path/to/local/images/folder/" --colors=4`
 
 `$ svg-thumbnailer ./resources/cartoon-dog.jpg --colors=4`
 
-![cartoon dog svg](resources/cartoon-dog.jpg.svg)
+![cartoon dog svg](resources/cartoon-dog.jpg.svg?sanitize=true)
