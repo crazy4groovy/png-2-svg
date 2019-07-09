@@ -83,7 +83,7 @@ module.exports = function (data, {tolerance = 0.2, combineLines = false, smooth,
   )
 
   const data2 = paths2.reduce(
-    (str, p, i) => str.replace(new RegExp(paths[i]), `d="${p}"`)
+    (str, p, i) => str.replace(paths[i], `d="${p}"`)
     , data
   )
 

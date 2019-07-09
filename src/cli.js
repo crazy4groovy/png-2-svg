@@ -47,7 +47,11 @@ async function main() {
       return
     }
 
-    const {data} = await toSvg(imgFilename, options).catch(console.log)
+    const {data} = await toSvg(imgFilename, options)
+      .catch(error => {
+        console.log(imgFilename, error)
+        throw error
+      })
 
     const formatFilename = writeFileWithTag ? undefined : imgFilename
     const output = formatOutput(data, formatFilename)
