@@ -22,7 +22,7 @@ const {data, info: {height, width}} = svgObj
 
 ### Optimizations
 
-- .tolerance = `0.2` (range: `0.0 - 3.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
+- .tolerance = `0.0` (range: `0.0 - 3.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
   - when `> 0.0`, tries to reduce amount of line points  (higher = less points).
 - .combineLines = `false`
   - when `true`, tries to combine svg path "shortcuts" into one long line segment. May help reduce amount of line points or file size.
