@@ -53,7 +53,6 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance = 0
   }
   const svg = await svgo.optimize(toSvg(imgData, svgOpts))
 
-  console.log({tolerance, smooth})
   if (!(tolerance || combineLines || smooth)) {
     return svg
   }
