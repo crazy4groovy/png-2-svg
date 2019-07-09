@@ -38,7 +38,7 @@ async function getImgData(imgFilename) {
   return JPEGReader.decode(bytes)
 }
 
-async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance, combineLines, smooth, smoothDecimalPlaces} = {}) {
+async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance = 0.2, combineLines = false, smooth = 0, smoothDecimalPlaces} = {}) {
   const imgData = await getImgData(imgFilename)
 
   // https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md
@@ -52,9 +52,9 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance, co
     numberofcolors: colors
   }
   const svg = await svgo.optimize(toSvg(imgData, svgOpts))
-  /// console.log({svg})
 
-  if (!(tolerance || smooth)) {
+  console.log({tolerance, smooth})
+  if (!(tolerance || combineLines || smooth)) {
     return svg
   }
 
@@ -65,7 +65,7 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance, co
     tolerance
   }
   const data = dataOptimize(svg.data, optimizeOpts)
-  /// console.log({d1: svg.data.length, d2: data.length})
+
   return {
     ...svg,
     data

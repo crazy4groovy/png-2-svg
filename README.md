@@ -2,7 +2,7 @@
 
 ## Overview
 
-Convert almost any image into optimized SVG with NodeJS.
+Convert almost any image into optimized ([svgo](https://npm.im/svgo)) SVG with NodeJS.
 
 ## Usage (lib)
 
@@ -22,17 +22,17 @@ const {data, info: {height, width}} = svgObj
 
 ### Optimizations
 
-- .tolerance = `0.2` (range: `0.0 - 5.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
-  - tries to reduce amount of line points  (higher = less points).
+- .tolerance = `0.2` (range: `0.0 - 3.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
+  - when `> 0.0`, tries to reduce amount of line points  (higher = less points).
 - .combineLines = `false`
-  - if `.tolerance > 0.0`, tries to combine svg line "shortcuts" into longer line segments. May help reduce amount of line points.
+  - when `true`, tries to combine svg path "shortcuts" into one long line segment. May help reduce amount of line points or file size.
 
 ----
 
-- .smooth = `0.0` (range: `0.0 - 0.5`) - WARNING: _significant_ increase of file size!
-  - tries to round out harsh line corners with bezier curves (higher = more rounded).
-- .smoothDecimalPlaces = `1` (range: `0 - 5`)
-  - if `.smooth > 0.0`, tries to minimize the file size by rounding X,Y points of bezier curve handles (higher = more accurate).
+- .smooth = `0.0` (range: `0.0 - 0.3`) - WARNING: _significant_ increase of file size!
+  - when `> 0.0` tries to round out harsh line corners with bezier curves (higher = more rounded).
+- .smoothDecimalPlaces = `1` (range: `0 - 3`)
+  - when `.smooth > 0.0`, tries to minimize the file size by rounding X,Y points of bezier curve handles (higher = more accurate).
 
 ## Usage (cli)
 

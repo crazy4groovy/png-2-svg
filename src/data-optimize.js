@@ -14,8 +14,7 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
   }, [])
 
   const points = numbersGrouped.map(([x, y]) => ({x, y}))
-
-  const points2 = simplifyjs(points, Math.min(tolerance, 5), true)
+  const points2 = simplifyjs(points, Math.min(tolerance, 3), true)
 
   if (smooth) {
     const points2XY = points2.map(({x, y}) => [x, y])
@@ -30,14 +29,15 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
 }
 
 module.exports = function (data, {tolerance = 0.2, combineLines = false, smooth, smoothDecimalPlaces}) {
+  console.log({tolerance, combineLines})
   const paths = data.match(/d="([^"]+)"/g)
   const pathsCleaned = paths.map(m => m.substring(3, m.length - 1))
   const pathsCommands = pathsCleaned
-    // Note: separate commands, [path#][command#]
+    // Note: separate commands per path: [paths][commands]
     .map(d => d.match(/[a-z][^a-z]*/ig))
     // Note: combine line command segments together
     .map(cs => cs.map(c => {
-      if (!(tolerance && combineLines)) {
+      if (!combineLines) {
         return c
       }
 
@@ -51,36 +51,42 @@ module.exports = function (data, {tolerance = 0.2, combineLines = false, smooth,
         return `l0 ${c.substr(1)}`
       }
 
+      if (cmd === 'q') {
+        const [x, y] = c.substr(1).replace(/-/g, ' -').trim().split(' ').slice(2)
+        return `l${x} ${y}`
+      }
+
       return c
     }))
 
   let lineCmd = ''
-  const paths2 = pathsCommands.map(cmds => cmds.reduce((pathCmd, c) => {
-    const cmd = c[0]
+  const paths2 = pathsCommands.map(cmds => cmds.reduce(
+    (pathCmd, c) => {
+      const cmd = c[0]
 
-    if (cmd !== 'l' && lineCmd.length > 0) {
-      const optimalLineCmd = optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) // <-- OPTIMIZATIONS HERE ******************
-      /// console.log({simpleLineCmd})
-      pathCmd += optimalLineCmd
-      lineCmd = ''
-    }
+      if (cmd !== 'l' && lineCmd.length > 0) {
+        const optimalLineCmd = optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) // <-- OPTIMIZATIONS HERE ******************
+        pathCmd += optimalLineCmd
+        lineCmd = ''
+      }
 
-    if (cmd === 'l') {
-      const spc = (cmd[0] === '-' || lineCmd.length === 1) ? '' : ' '
-      lineCmd += spc + c.substr(1)
-    } else {
-      pathCmd += c
-    }
+      if (cmd === 'l') {
+        lineCmd += ' ' + c.substr(1)
+      } else {
+        pathCmd += c
+      }
 
-    return pathCmd
-  }, ''))
-  /// console.log({paths, paths2})
+      return pathCmd
+    },
+    '')
+    .replace(/ (\D)/g, '$1')
+    .replace(/ +-/g, '-')
+  )
 
   const data2 = paths2.reduce(
     (str, p, i) => str.replace(new RegExp(paths[i]), `d="${p}"`)
     , data
   )
-  /// console.log({d: data.length, d2: data2.length})
 
   return data2
 }
