@@ -1,6 +1,6 @@
 {
   "name": "svg-thumbnailer",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Convert almost any image into optimized SVG with Node.js",
   "main": "dist/index.js",
   "bin": {
@@ -38,8 +38,9 @@
   "dependencies": {
     "imagetracerjs": "^1.2.5",
     "jpeg-js": "^0.3.5",
+    "paper": "^0.12.3",
+    "paper-jsdom": "^0.12.3",
     "png.js": "^0.2.1",
-    "simplify-js": "^1.2.3",
     "svgo": "^1.2.2"
   },
   "devDependencies": {
@@ -58,6 +59,9 @@
       "jest"
     ],
     "space": true,
-    "semicolon": false
+    "semicolon": false,
+    "rules": {
+      "import/no-unassigned-import": 0
+    }
   }
 }

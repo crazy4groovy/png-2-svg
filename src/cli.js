@@ -47,6 +47,8 @@ async function main() {
       return
     }
 
+    console.log(imgFilename)
+
     const {data} = await toSvg(imgFilename, options)
       .catch(error => {
         console.log(imgFilename, error)

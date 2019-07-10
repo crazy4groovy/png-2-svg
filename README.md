@@ -2,7 +2,7 @@
 
 ## Overview
 
-Convert almost any image into optimized ([svgo](https://npm.im/svgo)) SVG with NodeJS.
+Convert almost any image into [optimized](https://npm.im/svgo) SVG with NodeJS.
 
 ## Usage (lib)
 
@@ -17,22 +17,16 @@ const {data, info: {height, width}} = svgObj
 
 ## Options (= `default`)
 
-- .colors = `4`
+- .colors = `6`
 - .scale = `2`
 
-### Optimizations
+### Optimizations (via [Paper.js](http://paperjs.org/reference/compoundpath/))
 
-- .tolerance = `0.0` (range: `0.0 - 3.0`) - via [simplify-js](https://github.com/mourner/simplify-js)
-  - when `> 0.0`, tries to reduce amount of line points  (higher = less points).
-- .combineLines = `false`
-  - when `true`, tries to combine svg path "shortcuts" into one long line segment. May help reduce amount of line points or file size.
-
-----
-
-- .smooth = `0.0` (range: `0.0 - 0.3`) - WARNING: _significant_ increase of file size!
-  - when `> 0.0` tries to round out harsh line corners with bezier curves (higher = more rounded).
-- .smoothDecimalPlaces = `1` (range: `0 - 3`)
-  - when `.smooth > 0.0`, tries to minimize the file size by rounding X,Y points of bezier curve handles (higher = more accurate).
+- .tolerance = `10` ([simplify](http://paperjs.org/reference/compoundpath/#simplify))
+- .type = `'continuous'` ([smooth](http://paperjs.org/reference/compoundpath/#smooth))
+- .factor = `0.2` ([smooth](http://paperjs.org/reference/compoundpath/#smooth))
+  - Note: only used for `type`: catmull-rom, or geometric
+- .precision = `0` ([exportsvg](http://paperjs.org/reference/compoundpath/#exportsvg))
 
 ## Usage (cli)
 

@@ -48,23 +48,9 @@ export default [
     ]
   },
   {
-    input: 'src/data-optimize.js',
+    input: 'src/paper-path.js',
     output: {
-      file: 'dist/data-optimize.js',
-      format: 'cjs'
-    },
-    plugins: [
-      resolve(),
-      babel({
-        exclude: 'node_modules/**' // Only transpile our source code
-      }),
-      terser()
-    ]
-  },
-  {
-    input: 'src/bezier-smooth.js',
-    output: {
-      file: 'dist/bezier-smooth.js',
+      file: 'dist/paper-path.js',
       format: 'cjs'
     },
     plugins: [

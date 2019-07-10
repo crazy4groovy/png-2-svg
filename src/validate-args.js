@@ -1,9 +1,9 @@
 export default {
   colors: Number,
   scale: Number,
-  smooth: Number,
-  smoothDecimalPlaces: Number,
   tolerance: Number,
-  combineLines: Boolean,
+  type: String,
+  factor: Number,
+  precision: Number,
   writeFileWithTag: String
 }
