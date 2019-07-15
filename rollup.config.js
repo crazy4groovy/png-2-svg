@@ -74,5 +74,33 @@ export default [
       }),
       terser()
     ]
+  },
+  {
+    input: 'src/color-thief.js',
+    output: {
+      file: 'dist/color-thief.js',
+      format: 'cjs'
+    },
+    plugins: [
+      resolve(),
+      babel({
+        exclude: 'node_modules/**' // Only transpile our source code
+      }),
+      terser()
+    ]
+  },
+  {
+    input: 'src/color-paint.js',
+    output: {
+      file: 'dist/color-paint.js',
+      format: 'cjs'
+    },
+    plugins: [
+      resolve(),
+      babel({
+        exclude: 'node_modules/**' // Only transpile our source code
+      }),
+      terser()
+    ]
   }
 ]

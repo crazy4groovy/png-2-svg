@@ -5,6 +5,7 @@ const JPEGReader = require('jpeg-js')
 const ImageTracer = require('imagetracerjs')
 const SVGO = require('svgo')
 
+const vibrantPalette = require('./color-paint')
 const dataOptimize = require('./data-optimize')
 
 const svgo = new SVGO({
@@ -38,7 +39,7 @@ async function getImgData(imgFilename) {
   return JPEGReader.decode(bytes)
 }
 
-async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance = 0, combineLines = false, smooth = 0, smoothDecimalPlaces} = {}) {
+async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, vibrant = true, tolerance = 0, combineLines = false, smooth = 0, smoothDecimalPlaces} = {}) {
   const imgData = await getImgData(imgFilename)
 
   // https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md
@@ -48,11 +49,15 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, tolerance = 0
     scale,
     ltres: tres, // 1
     qtres: tres, // 1
-    pathomit: 4 + (colors * 3), // 8
-    colorquantcycles: 2 + colors, // 3
+    pathomit: Math.min(32, 4 + (colors * 3)), // 8
+    colorquantcycles: Math.min(6, colors), // 3
     numberofcolors: colors, // 16
-    mincolorratio: 0.03 // 0.02
+    mincolorratio: vibrant ? 0.00001 : 0.03 // 0.02
   }
+  if (vibrant) {
+    svgOpts.pal = vibrantPalette(imgData.data, colors)
+  }
+
   const svg = await svgo.optimize(toSvg(imgData, svgOpts))
 
   if (!(tolerance || combineLines || smooth)) {

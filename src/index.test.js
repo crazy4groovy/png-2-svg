@@ -13,6 +13,13 @@ test('should svg an image; color=2', async () => {
   expect(result).toMatchSnapshot()
 })
 
+test('should svg an image; vibrant=false', async () => {
+  const opts = {vibrant: false}
+  const imgSrc = './resources/cartoon-dog.jpg'
+  const result = await target(imgSrc, opts)
+  expect(result).toMatchSnapshot()
+})
+
 test('should svg an image; scale=1', async () => {
   const opts = {scale: 1}
   const imgSrc = './resources/cartoon-dog.jpg'

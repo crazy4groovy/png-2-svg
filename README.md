@@ -2,7 +2,7 @@
 
 ## Overview
 
-Convert almost any image into optimized ([svgo](https://npm.im/svgo)) SVG with NodeJS.
+Convert almost any image into a [vibrant](https://github.com/lokesh/color-thief/), [optimized](https://npm.im/svgo) SVG with NodeJS.
 
 ## Usage (lib)
 
@@ -19,6 +19,9 @@ const {data, info: {height, width}} = svgObj
 
 - .colors = `4`
 - .scale = `2`
+- vibrant = `true`
+  - tries to quantize palette with most "vibrant"/prominent colors. [color-thief](https://github.com/lokesh/color-thief/)
+  - may not look as good with high amount of `.colors`.
 
 ### Optimizations
 
@@ -40,9 +43,9 @@ const {data, info: {height, width}} = svgObj
 
 `svg-thumbnailer {image-path} {options?}`
 
-Eg. `svg-thumbnailer "/path/to/local/images/folder/img.jpg" --colors=4`
+Eg. `svg-thumbnailer "/path/to/local/images/folder/img.jpg" --colors=4 --vibrant=true`
 
-Eg. `svg-thumbnailer "/path/to/local/images/folder/" --colors=4`
+Eg. `svg-thumbnailer "/path/to/local/images/folder/" --colors=4 --vibrant=true`
 
 - supports option: `--writeFileWithTag=svg`
 
@@ -61,6 +64,6 @@ Eg. `svg-thumbnailer "/path/to/local/images/folder/" --colors=4`
 
 ![cartoon dog](resources/cartoon-dog.jpg)
 
-`$ svg-thumbnailer ./resources/cartoon-dog.jpg --colors=4`
+`$ svg-thumbnailer ./resources/cartoon-dog.jpg --writeFileWithTag=svg --colors=6`
 
 ![cartoon dog svg](resources/cartoon-dog.jpg.svg?sanitize=true)
