@@ -1,6 +1,6 @@
 {
   "name": "svg-thumbnailer",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Convert almost any image into a vibrant, optimized SVG with Node.js",
   "main": "dist/index.js",
   "bin": {

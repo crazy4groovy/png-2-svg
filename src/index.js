@@ -5,7 +5,7 @@ const JPEGReader = require('jpeg-js')
 const ImageTracer = require('imagetracerjs')
 const SVGO = require('svgo')
 
-const vibrantPalette = require('./color-paint')
+const {getPalette} = require('./color-thief')
 const dataOptimize = require('./data-optimize')
 
 const svgo = new SVGO({
@@ -39,7 +39,7 @@ async function getImgData(imgFilename) {
   return JPEGReader.decode(bytes)
 }
 
-async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, vibrant = true, tolerance = 0, combineLines = false, smooth = 0, smoothDecimalPlaces} = {}) {
+async function svgThumbnailer(imgFilename, {colors = 4, scale = 1, vibrant = true, tolerance = 0, combineLines = false, smooth = 0, smoothDecimalPlaces} = {}) {
   const imgData = await getImgData(imgFilename)
 
   // https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md
@@ -54,8 +54,10 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, vibrant = tru
     numberofcolors: colors, // 16
     mincolorratio: vibrant ? 0.00001 : 0.03 // 0.02
   }
+
   if (vibrant) {
-    svgOpts.pal = vibrantPalette(imgData.data, colors)
+    const {palette} = getPalette(imgData, colors)
+    svgOpts.pal = palette.map(([r, g, b]) => ({r, g, b, a: 255}))
   }
 
   const svg = await svgo.optimize(toSvg(imgData, svgOpts))
@@ -70,12 +72,7 @@ async function svgThumbnailer(imgFilename, {colors = 4, scale = 2, vibrant = tru
     smoothDecimalPlaces,
     tolerance
   }
-  const data = dataOptimize(svg.data, optimizeOpts)
-
-  return {
-    ...svg,
-    data
-  }
+  return svgo.optimize(dataOptimize(svg, optimizeOpts))
 }
 
 module.exports = svgThumbnailer

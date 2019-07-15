@@ -34,7 +34,7 @@
 *
 */
 
-module.exports.getPalette = function (data, colorCount, quality = 5) {
+module.exports.getPalette = function ({data}, colorCount, quality = 5) {
   colorCount = Math.min(256, Math.max(2, colorCount))
   quality = Math.min(20, Math.max(1, quality))
 

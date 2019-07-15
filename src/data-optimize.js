@@ -28,7 +28,7 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
   }, 'l')
 }
 
-module.exports = function (data, {tolerance = 0, combineLines = false, smooth, smoothDecimalPlaces}) {
+module.exports = function ({data}, {tolerance = 0, combineLines = false, smooth, smoothDecimalPlaces}) {
   const paths = data.match(/d="([^"]+)"/g)
   const pathsCleaned = paths.map(m => m.substring(3, m.length - 1))
   const pathsCommands = pathsCleaned

@@ -1,6 +1,6 @@
 export default {
   colors: Number,
-  combineLines: v => v !== 'true',
+  combineLines: v => v === 'true',
   scale: Number,
   smooth: Number,
   smoothDecimalPlaces: Number,

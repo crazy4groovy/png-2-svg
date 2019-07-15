@@ -18,10 +18,10 @@ const {data, info: {height, width}} = svgObj
 ## Options (= `default`)
 
 - .colors = `4`
-- .scale = `2`
-- vibrant = `true`
-  - tries to quantize palette with most "vibrant"/prominent colors. [color-thief](https://github.com/lokesh/color-thief/)
-  - may not look as good with high amount of `.colors`.
+- .scale = `1`
+- .vibrant = `true` - via [color-thief](https://github.com/lokesh/color-thief/)
+  - tries to quantize palette with most "vibrant"/prominent colors.
+  - may not look as good with a high amount of `.colors`.
 
 ### Optimizations
 
