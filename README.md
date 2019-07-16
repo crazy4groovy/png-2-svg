@@ -15,7 +15,7 @@ const svgObj = await toSvg('./my/img.jpg', options)
 const {data, info: {height, width}} = svgObj
 ```
 
-## Options (= `default`)
+### Options (= `default`)
 
 - .colors = `4`
 - .scale = `1`
@@ -47,7 +47,12 @@ Eg. `svg-thumbnailer "/path/to/local/images/folder/img.jpg" --colors=4 --vibrant
 
 Eg. `svg-thumbnailer "/path/to/local/images/folder/" --colors=4 --vibrant=true`
 
-- supports option: `--writeFileWithTag=svg`
+### Options
+
+- writeFileWithTag (eg. `svg`)
+  - writes to file, using the image's file name as prefix. Otherwise, writes to console.
+- clobberFile = `true`
+  - when `false`, if the output file already exists, it is skipped.
 
 ## Quality
 

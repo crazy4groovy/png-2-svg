@@ -1,4 +1,5 @@
 export default {
+  clobberFile: v => v !== 'false',
   colors: Number,
   combineLines: v => v === 'true',
   scale: Number,

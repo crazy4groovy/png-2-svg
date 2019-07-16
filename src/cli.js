@@ -40,10 +40,14 @@ async function main() {
     return map
   }, {})
 
-  const {writeFileWithTag} = options
+  const {writeFileWithTag, clobberFile} = options
 
   const handleSrc = async (imgFilename, noCheckFileTag) => {
     if (!noCheckFileTag && !imgFilename.match(/\.(jpe?g|png)$/i)) {
+      return
+    }
+
+    if (writeFileWithTag && clobberFile === false && dir.fileExists(`${imgFilename}.${writeFileWithTag}`)) {
       return
     }
 
