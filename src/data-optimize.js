@@ -2,7 +2,7 @@ const simplifyjs = require('simplify-js')
 
 const bezierSmooth = require('./bezier-smooth')
 
-function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
+function optimizeLineCmd(lineCmd, {tolerance, smooth}) {
   // Note: lineCmd does not being with 'l'
   const numbers = lineCmd.match(/-?\d+ */g)
   const numbersGrouped = numbers.reduce((g, n, i) => {
@@ -18,53 +18,32 @@ function optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) {
 
   if (smooth) {
     const points2XY = points2.map(({x, y}) => [x, y])
-    return bezierSmooth(points2XY, {smooth, smoothDecimalPlaces})
+    return bezierSmooth(points2XY, {smooth})
   }
 
-  return points2.reduce((str, {x, y}) => {
-    const spcX = (str.length === 1 || x < 0) ? '' : ' '
-    const spcY = y < 0 ? '' : ' '
-    return str + spcX + x + spcY + y
-  }, 'l')
+  return points2.reduce((str, {x, y}) => str + ' ' + x + ' ' + y, 'l')
 }
 
-module.exports = function ({data}, {tolerance = 0, combineLines = false, smooth, smoothDecimalPlaces}) {
+module.exports = function ({data}, {
+  tolerance = 0,
+  decimalPlaces = true,
+  smooth = 0
+}) {
   const paths = data.match(/d="([^"]+)"/g)
   const pathsCleaned = paths.map(m => m.substring(3, m.length - 1))
   const pathsCommands = pathsCleaned
     // Note: separate commands per path: [paths][commands]
     .map(d => d.match(/[a-z][^a-z]*/ig))
-    // Note: combine line command segments together
-    .map(cs => cs.map(c => {
-      if (!combineLines) {
-        return c
-      }
-
-      const cmd = c[0]
-
-      if (cmd === 'h') {
-        return `l${c.substr(1)} 0`
-      }
-
-      if (cmd === 'v') {
-        return `l0 ${c.substr(1)}`
-      }
-
-      if (cmd === 'q') {
-        const [x, y] = c.substr(1).replace(/-/g, ' -').trim().split(' ').slice(2)
-        return `l${x} ${y}`
-      }
-
-      return c
-    }))
 
   let lineCmd = ''
-  const paths2 = pathsCommands.map(cmds => cmds.reduce(
+  let paths2 = pathsCommands.map(cmds => cmds.reduce(
     (pathCmd, c) => {
       const cmd = c[0]
 
       if (cmd !== 'l' && lineCmd.length > 0) {
-        const optimalLineCmd = optimizeLineCmd(lineCmd, {tolerance, smooth, smoothDecimalPlaces}) // <-- OPTIMIZATIONS HERE ******************
+        const optimalLineCmd = tolerance || smooth ?
+          optimizeLineCmd(lineCmd, {tolerance, smooth}) : // <-- OPTIMIZATIONS HERE ******************
+          'l' + lineCmd
         pathCmd += optimalLineCmd
         lineCmd = ''
       }
@@ -78,9 +57,28 @@ module.exports = function ({data}, {tolerance = 0, combineLines = false, smooth,
       return pathCmd
     },
     '')
-    .replace(/ (\D)/g, '$1')
-    .replace(/ +-/g, '-')
   )
+
+  if (!decimalPlaces) {
+    paths2 = paths2.map(p => {
+      const numbers = p.match(/-?\d*\.\d/g) || []
+      const numbersRounded = numbers.map(n => {
+        const d = Math.abs(n % 1)
+        if (d !== 0.5) {
+          return Math.round(n)
+        }
+
+        return n
+      })
+      let idx = 0
+      numbers.forEach((n, i) => {
+        const pRemainder = p.slice(idx)
+        p = p.slice(0, idx) + pRemainder.replace(String(n), numbersRounded[i])
+        idx = pRemainder.indexOf(n) + String(numbersRounded[i]).length
+      })
+      return p
+    })
+  }
 
   const data2 = paths2.reduce(
     (str, p, i) => str.replace(paths[i], `d="${p}"`)
